@@ -26,22 +26,17 @@ static const uint8_t crc_table[256] =
 	0x5a, 0x06, 0x4b, 0x9c, 0xd1, 0x7f, 0x32, 0xe5, 0xa8
 };
 
-void LD06_init(LD06 *ld06, uint8_t (*readFunc)(), void (*receivedCallback)(LD06 *))
+void LD06_init(LD06 *ld06, void (*receivedCallback)(LD06 *))
 {
-    ld06->readFunc = readFunc;
     ld06->receivedCallback = receivedCallback;
 
     ld06->index = 0;
 }
 
-void LD06_read(LD06 *ld06)
+void LD06_calc(LD06 *ld06, uint8_t data)
 {
-    if(ld06->readFunc == NULL)
-    {
-        return;
-    }
 
-    ld06->data[ld06->index] = ld06->readFunc();
+    ld06->data[ld06->index] = data;
 
     if(ld06->index == 0){
         ld06->header0 = ld06->data[0];

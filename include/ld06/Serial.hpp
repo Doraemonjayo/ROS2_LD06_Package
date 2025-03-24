@@ -23,10 +23,8 @@ public:
     int begin(speed_t baudrate);
     void end();
     int available();
-    size_t readBytes(uint8_t *buf, size_t size);
-    size_t writeBytes(uint8_t const *buf, size_t size);
-    uint8_t read();
-    uint8_t write(uint8_t data);
+    ssize_t read(uint8_t *buf, size_t size);
+    ssize_t write(uint8_t const *buf, size_t size);
     bool isOpen();
     const char *getPortName();
 };

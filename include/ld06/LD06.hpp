@@ -19,7 +19,6 @@ typedef struct LD06 LD06;
 
 struct LD06
 {
-    uint8_t (*readFunc)();//example: Serial.read
     void (*receivedCallback)(LD06 *);
 
     size_t index;
@@ -41,7 +40,7 @@ struct LD06
     float angle[LD06_NUM_POINTS];//[rad]
 };
 
-void LD06_init(LD06 *ld06, uint8_t (*readFunc)(), void (*receivedCallback)(LD06 *));
-void LD06_read(LD06 *ld06);
+void LD06_init(LD06 *ld06, void (*receivedCallback)(LD06 *));
+void LD06_calc(LD06 *ld06, uint8_t data);
 
 #endif // LD06_H

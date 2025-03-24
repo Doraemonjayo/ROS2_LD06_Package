@@ -13,7 +13,7 @@ Serial::~Serial()
 int Serial::begin(speed_t baudrate){
     baudrate_ = baudrate;
 
-    fd_ = open(port_name_, O_RDWR | O_NOCTTY);
+    fd_ = open(port_name_, O_RDWR | O_NOCTTY | O_NONBLOCK);
     if (fd_ == -1)
     {
         return -1;
@@ -34,7 +34,7 @@ int Serial::begin(speed_t baudrate){
     options_.c_cflag &= ~(PARENB | CSTOPB | CRTSCTS);
     options_.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
 
-    options_.c_cc[VMIN] = 1;
+    options_.c_cc[VMIN] = 0;
     options_.c_cc[VTIME] = 0;
 
     tcflush(fd_, TCIFLUSH);
@@ -64,46 +64,18 @@ int Serial::available(){
     return bytesAvailable;
 }
 
-size_t Serial::readBytes(uint8_t *buf, size_t size){
+ssize_t Serial::read(uint8_t *buf, size_t size){
     if(!is_open_){
         return 0;
     }
-    ssize_t result = ::read(fd_, buf, size);
-    if(result < 0){
-        return 0;
-    }
-    return static_cast<size_t>(result);
+    return ::read(fd_, buf, size);
 }
 
-size_t Serial::writeBytes(const uint8_t *buf, size_t size){
+ssize_t Serial::write(const uint8_t *buf, size_t size){
     if(!is_open_){
         return 0;
     }
-    ssize_t result = ::write(fd_, buf, size);
-    if(result < 0){
-        return 0;
-    }
-    return static_cast<size_t>(result);
-}
-
-uint8_t Serial::read(){
-    if(!is_open_){
-        return 0;
-    }
-    uint8_t data;
-    size_t result = readBytes(&data, 1);
-    if(result != 1){
-        return 0;
-    }
-    return data;
-}
-
-uint8_t Serial::write(uint8_t data){
-    if(!is_open_){
-        return 0;
-    }
-    writeBytes(&data, 1);
-    return data;
+    return ::write(fd_, buf, size);
 }
 
 bool Serial::isOpen(){

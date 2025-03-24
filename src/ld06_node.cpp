@@ -6,12 +6,12 @@
 #include "sensor_msgs/point_cloud2_iterator.hpp"
 
 LD06 ld06;
-Serial mySerial("/dev/ttyUSB0");
+Serial mySerial("/dev/ttyUSB1");
 void ld06_received(LD06 *ld06_);
-uint8_t mySerial_read();
 std::vector<float> x_array = {};
 std::vector<float> y_array = {};
 bool array_rock = false;
+uint8_t ld06_buffer[1024];
 
 class LD06Node : public rclcpp::Node
 {
@@ -80,12 +80,10 @@ private:
   }
 
   void read_lidar(){
-    while (mySerial.available() > 0)
+    ssize_t data_len = mySerial.read(ld06_buffer, sizeof(ld06_buffer));
+    for (size_t i = 0; i < data_len; i++)
     {
-      if(array_rock){
-        return;
-      }
-      LD06_read(&ld06);
+      LD06_calc(&ld06, ld06_buffer[i]);
     }
   }
 
@@ -98,7 +96,7 @@ private:
 int main(int argc, char **argv)
 {
   mySerial.begin(B230400);
-  LD06_init(&ld06, mySerial_read, ld06_received);
+  LD06_init(&ld06, ld06_received);
   if (!mySerial.isOpen())
   {
     std::cout << "cannot open \"" << mySerial.getPortName() << "\"" << std::endl;
@@ -122,9 +120,4 @@ void ld06_received(LD06 *ld06_)
     x_array.push_back(cos(-angle) * distance);
     y_array.push_back(sin(-angle) * distance);
   }
-}
-
-uint8_t mySerial_read()
-{
-  return mySerial.read();
 }
