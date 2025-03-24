@@ -1,3 +1,6 @@
+#ifndef SERIAL_HPP
+#define SERIAL_HPP
+
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
@@ -27,3 +30,5 @@ public:
     bool isOpen();
     const char *getPortName();
 };
+
+#endif //SERIAL_HPP
