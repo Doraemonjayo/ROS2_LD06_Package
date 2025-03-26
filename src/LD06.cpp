@@ -60,17 +60,17 @@ void LD06_calc(LD06 *ld06, uint8_t data)
     if(ld06->index == LD06_DATA_SIZE - 1)
     {
         if(ld06->crc == ld06->data[LD06_DATA_SIZE - 1]){
-            ld06->speed = (uint16_t)((ld06->data[3] << 8) | ld06->data[2]) / 180.0f * M_PI_F;
-            ld06->start_angle = (uint16_t)((ld06->data[5] << 8) | ld06->data[4]) / 100.0f  / 180.0f * M_PI_F;
-            ld06->end_angle = (uint16_t)((ld06->data[43] << 8) | ld06->data[42]) / 100.0f  / 180.0f * M_PI_F;
+            ld06->speed = (uint16_t)((ld06->data[3] << 8) | ld06->data[2]) / 180.0f * - M_PI_F;
+            ld06->start_angle = (uint16_t)((ld06->data[5] << 8) | ld06->data[4]) / 100.0f  / 180.0f * - M_PI_F;
+            ld06->end_angle = (uint16_t)((ld06->data[43] << 8) | ld06->data[42]) / 100.0f  / 180.0f * - M_PI_F;
             ld06->timestamp = (ld06->data[45] << 8) | ld06->data[44];
 
             float d_angle = ld06->end_angle - ld06->start_angle;
-            while (d_angle >= 2 * M_PI_F)
+            while (d_angle >= M_PI_F)
             {
                 d_angle -= 2 * M_PI_F;
             }
-            while (d_angle < 0)
+            while (d_angle < -M_PI_F)
             {
                 d_angle += 2 * M_PI_F;
             }
@@ -79,7 +79,7 @@ void LD06_calc(LD06 *ld06, uint8_t data)
             for (size_t i = 0; i < LD06_NUM_POINTS; i++)
             {
                 ld06->angle[i] = ld06->start_angle + i * ld06->step;
-                ld06->distance[i] = (ld06->data[7 + 3 * i] << 8) | ld06->data[6 + 3 * i];
+                ld06->distance[i] = (uint16_t)((ld06->data[7 + 3 * i] << 8) | ld06->data[6 + 3 * i]) / 1000.0f;
                 ld06->confidence[i] = ld06->data[8 + 3 * i];
             }
             

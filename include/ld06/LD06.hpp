@@ -33,7 +33,7 @@ struct LD06
     uint16_t timestamp;//max 30000
     uint8_t crc;//checksum
 
-    uint16_t distance[LD06_NUM_POINTS];//[mm]
+    float distance[LD06_NUM_POINTS];//[m]
     uint8_t confidence[LD06_NUM_POINTS];//0~255
 
     float step;//[rad]

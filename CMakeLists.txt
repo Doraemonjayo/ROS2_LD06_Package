@@ -9,8 +9,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
 
-add_executable(ld06_node src/ld06_node.cpp src/LD06.cpp src/Serial.cpp)
+add_executable(ld06_node src/ld06_node.cpp src/LD06.cpp src/Serial.cpp src/LineScanner.cpp)
 target_include_directories(ld06_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -19,6 +20,7 @@ ament_target_dependencies(
   ld06_node
   "rclcpp"
   "sensor_msgs"
+  "visualization_msgs"
 )
 
 install(TARGETS ld06_node
